@@ -1,0 +1,1 @@
+# Java-Video-Transcoder\n\n## Overview\nEnterprise-grade video transcoder implementation in Java.\n\n## Quick Start (1-Click Build)\n\n```bash\ngit clone https://github.com/skylerblue333/Java-Video-Transcoder.git\ncd Java-Video-Transcoder\n# Build instructions depend on the language\n```\n
