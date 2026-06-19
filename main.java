@@ -1,1 +1,0 @@
-// Starting Java-Video-Transcoder service\n
