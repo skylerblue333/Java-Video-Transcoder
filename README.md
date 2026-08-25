@@ -1,44 +1,45 @@
-<!-- PORTFOLIO PROJECT PROFILE: maintained by the repository owner -->
+# Sky Video Transcoder (Java)
 
-## Project profile and code-audit snapshot
+**Status: engineering beta.** This repository wraps the local FFmpeg binary from Java 21 using `ProcessBuilder` argument vectors rather than shell command strings. It provides a small set of bounded media profiles and explicit timeout/path validation.
 
-**What this is:** **Java-Video-Transcoder** is a public repository described as: “Enterprise-grade video transcoder implementation in Java. #SkyCoin4444 #AI #Blockchain #DevOps #Innovation” Its dominant language signals are **Java (1 files)**.
+## Implemented
 
-**Why it has value:** Its value is best understood through the implementation evidence currently present in the repository: **14 tracked files** were observed in the shallow audit, with the source structure and existing documentation providing the project’s specific context. This README does not treat a prototype, experiment, or archive as a production system without supporting evidence.
+- real Java 21 implementation
+- FFmpeg execution without shell interpolation
+- input extension allowlist
+- output restricted to `.mp4` or `.m4a`
+- input/output self-overwrite rejection
+- 30-minute default CLI timeout; library timeout bounded to 2 hours
+- profiles: H.264/AAC 720p, H.264/AAC 1080p, audio-only AAC
+- capped FFmpeg log capture
+- JUnit command/validation tests
+- CI-generated media fixture and actual FFmpeg transcode smoke test
+- container image with FFmpeg and non-root execution
 
-**Implementation evidence:** No test-related file was detected by filename heuristics.; 2 dependency or package manifest(s) detected; 1 build/CI/infrastructure signal(s) detected; and 3 documentation or governance file(s) detected. Test filenames observed include none detected. Dependency or package files include `package.json`, `pom.xml`. Build, CI, or infrastructure signals include `.github/workflows/ci.yml`.
+## Build and test
 
-**Current status:** The repository is tracked on the `main` branch. The existing source tree, configuration, tests, workflows, and documentation remain authoritative for supported behavior and maturity. A code audit is not a production-readiness certification, and the presence of a test or workflow file does not establish that all checks pass.
+```bash
+mvn clean verify
+```
 
-**Relationship to the wider portfolio:** This repository is one focused component of the broader Skyler Blue Spillers portfolio across AI, software engineering, cloud and DevOps, cybersecurity, blockchain, finance, education, social systems, and creative work. It may provide a service boundary, implementation pattern, experiment, archive, or reusable idea for related repositories. Treat repositories as technical dependencies only where documented interfaces and verified project requirements support that relationship.
+Local FFmpeg is required for actual transcoding:
 
-**Quality and security note:** No obvious secret-like pattern was detected by the limited static scan; this is not a substitute for a security audit. No TODO/FIXME marker was detected in the scanned text files.
+```bash
+java -jar target/sky-video-transcoder-0.1.0.jar input.mov output.mp4 MP4_720P
+```
 
----
+Health-only smoke signal:
 
-# Java Video Transcoder
+```bash
+java -jar target/sky-video-transcoder-0.1.0.jar --health
+```
 
-![GitHub stars](https://img.shields.io/github/stars/skylerblue333/Java-Video-Transcoder?style=flat-square)
-![GitHub license](https://img.shields.io/github/license/skylerblue333/Java-Video-Transcoder?style=flat-square)
+## Boundaries
 
-## 🌟 Overview
-**Java-Video-Transcoder** is a professional-grade project within the **SkyCoin4444** ecosystem. It focuses on delivering high-value solutions in the domain of **Software Development**.
+This is not a cloud transcoding service, media CDN, streaming packager, DRM platform, upload service, job scheduler, GPU transcoder, malware scanner, or verified production deployment. It does not sandbox FFmpeg beyond process/container isolation, inspect media authenticity, manage storage credentials, enforce tenant quotas, generate HLS/DASH manifests, provide distributed queues, or guarantee codec availability outside the documented container.
 
-## 🚀 Key Features
-- **Scalable Architecture**: Designed for enterprise-level growth and performance.
-- **Modern Standards**: Implements best practices for clean code and maintainability.
-- **Robust Integration**: Built to work seamlessly within modern cloud-native environments.
+Production use would require durable job state, isolated untrusted-media execution, object-storage adapters, resource quotas, observability, retries, cancellation, authentication/RBAC, media validation, and deployment verification.
 
-## 🛠️ Technology Stack
-- **Primary Domain**: Software Development
-- **Ecosystem**: SkyCoin4444 Digital Platform
+## License
 
-## 📂 Structure
-The project is organized into a modular structure to ensure clarity and ease of development.
-
-## 👨‍💻 Author
-**Skyler Blue Spillers**
-*Professional Chess Player & Software Engineer*
-
----
-*Powered by SkyCoin4444*
+See `LICENSE`.
