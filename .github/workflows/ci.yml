@@ -1,12 +1,31 @@
-name: CI
-on: [push]
+name: transcoder-ci
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
 jobs:
-  build:
+  verify:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-java@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v5
         with:
-          java-version: '17'
-          distribution: 'temurin'
-      - run: mvn compile
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - name: Test and package
+        run: mvn -B -ntp clean verify
+      - name: Install ffmpeg
+        run: sudo apt-get update -qq && sudo apt-get install -y ffmpeg
+      - name: Real transcode smoke
+        run: |
+          ffmpeg -hide_banner -loglevel error -f lavfi -i color=c=black:s=320x240:d=1 -f lavfi -i sine=frequency=1000:duration=1 -shortest -c:v libx264 -c:a aac /tmp/input.mp4
+          java -jar target/sky-video-transcoder-0.1.0.jar /tmp/input.mp4 /tmp/output.mp4 MP4_720P
+          test -s /tmp/output.mp4
+      - name: Build image
+        run: docker build -t sky-video-transcoder:ci .
+      - name: Verify non-root image
+        run: test "$(docker image inspect sky-video-transcoder:ci --format '{{.Config.User}}')" = "10001:10001"
+      - name: Container health
+        run: docker run --rm sky-video-transcoder:ci --health | grep '"status":"ready"'
